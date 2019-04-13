@@ -5,7 +5,7 @@ public class FindFibonacciSeries {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		/*Write a program to find Fibonacci series of a given no.
+		/*Write a program to find FibonacciSeries series of a given no.
 
 		  Example :
 
@@ -19,7 +19,7 @@ public class FindFibonacciSeries {
 
 		          
 		          int num=6;
-		          System.out.println("*****Fibonacci Series*****");
+		          System.out.println("*****FibonacciSeries Series*****");
 
 		          int f1, f2=0, f3=1;
 
