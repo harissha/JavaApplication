@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.elasticsearch.client:transport:5.4.3" level="project" />
     <orderEntry type="library" name="Maven: org.elasticsearch.plugin:transport-netty3-client:5.4.3" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty:3.10.6.Final" level="project" />
@@ -99,12 +100,9 @@
     <orderEntry type="library" name="Maven: org.apache.directory.api:api-ldap-schema-data:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache:2.10.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.directory.server:apacheds-all:2.0.0-M24" level="project" />
-	<orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.kafka:kafka_2.10:0.9.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.101tec:zkclient:0.7" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.15" level="project" />
-    <orderEntry type="library" name="Maven: javax.mail:mail:1.4" level="project" />
-    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.kafka:kafka-clients:0.9.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.1.1.7" level="project" />
     <orderEntry type="library" name="Maven: net.jpountz.lz4:lz4:1.2.0" level="project" />
@@ -115,5 +113,8 @@
     <orderEntry type="library" name="Maven: jline:jline:0.9.94" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.16.18" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
+    <orderEntry type="library" name="Maven: javax.mail:mail:1.4" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
   </component>
 </module>
