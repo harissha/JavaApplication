@@ -36,7 +36,6 @@ public class MongoClientConnection {
     /*
      *
      * parseMongoOutput --- Method for converting string into json.
-     * @author Rajkumar Srinivasan
      * This method contains the logic for converting
      * given string into json format and returns json data.
      * It uses Gson liberary.
