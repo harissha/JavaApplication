@@ -152,7 +152,7 @@ public class KafkaProducer11 {
     public static void main(final String[] args) throws Exception {
         //final KafkaProducer11 kafka = KafkaProducer11.getInstance();
         String str = "cits-eb-kfk-stg1-001:9097,cits-eb-kfk-stg1-002:9097,cits-eb-kfk-stg1-003:9097,cits-eb-kfk-stg1-101:9097,cits-eb-kfk-stg1-102:9097,cits-eb-kfk-stg1-103:9097";
-        final KafkaProducer11 kafka = KafkaProducer11.getKafkaInstance(str, "break");
+        final KafkaProducer11 kafka = KafkaProducer11.getKafkaInstance(str, "test-1");
         //kafka.initialize();
        final String builderCMM = "{\n" +
                "\t\"op\": \"index\",\n" +
@@ -177,12 +177,12 @@ public class KafkaProducer11 {
 
         //final String topic = PropertyUtil.getProperty("kafkaTopic");
         System.out.println(gKafkaTopic+"=\n"+builderCMM);
-        Integer partition = 1;
+        Integer partition = null;
         String key =null;
         //Long timestamp = null;
         final ProducerRecord<String, String> keyedMsg = new ProducerRecord<>(gKafkaTopic, partition, key, builderCMM);
         try{
-            //kafka.publishMessage(keyedMsg);
+            kafka.publishMessage(keyedMsg);
             System.out.println(gBootstrapServers);
             System.out.println("-----------------------------------------------------------------------------------------");
             System.out.println(keyedMsg);
