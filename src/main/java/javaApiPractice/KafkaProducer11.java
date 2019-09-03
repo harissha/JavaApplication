@@ -175,6 +175,7 @@ public class KafkaProducer11 {
                "\t\"mdfLeafNodeId\": \"_NULL_\"\n" +
                "}";
 
+
         //final String topic = PropertyUtil.getProperty("kafkaTopic");
         System.out.println(gKafkaTopic+"=\n"+builderCMM);
         Integer partition = null;

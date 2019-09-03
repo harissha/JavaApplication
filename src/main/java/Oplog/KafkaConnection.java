@@ -14,20 +14,20 @@ import org.apache.log4j.Logger;
 import java.util.List;
 import java.util.Properties;
 
-public class KafkaPublisher {
-    private static Logger gLogger = Logger.getLogger(KafkaPublisher.class);
+public class KafkaConnection {
+    private static Logger gLogger = Logger.getLogger(KafkaConnection.class);
     private static KafkaProducer<String, String> gProducer;
-    private static KafkaPublisher gKafkaProducer;
+    private static KafkaConnection gKafkaProducer;
     private int total = 0;
     static {
-        gKafkaProducer = new KafkaPublisher();
+        gKafkaProducer = new KafkaConnection();
     }
 
-    public KafkaPublisher() {
+    public KafkaConnection() {
         initialize();
     }
 
-    public static KafkaPublisher getInstance() throws ServiceException {
+    public static KafkaConnection getInstance() throws ServiceException {
         if (gKafkaProducer == null) {
             throw new ServiceException("Kafka Producer not initialized");
         }
@@ -68,7 +68,7 @@ public class KafkaPublisher {
         gLogger.info("PUBLISHED :" + aKeyedMsg);
         //System.out.println();
         System.out.println("PUBLISHED :" + aKeyedMsg);
-        gProducer.send(aKeyedMsg);
+        //gProducer.send(aKeyedMsg);
     }
     
 
@@ -91,7 +91,7 @@ public class KafkaPublisher {
 
     @SuppressWarnings("unused")
     public static void main(final String[] args) throws Exception {
-        final KafkaPublisher kafka = KafkaPublisher.getInstance();
+        final KafkaConnection kafka = KafkaConnection.getInstance();
         final StringBuilder builder = new StringBuilder("\"message\":\"This is sample message\"");
         final String topic = "kafka11-test1";
         final ProducerRecord<String, String> keyedMsg = new ProducerRecord<>(topic, builder.toString());
