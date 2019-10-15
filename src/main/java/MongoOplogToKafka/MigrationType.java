@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 public enum MigrationType {
     MONGO_CHANGE_STREAM("mongoChangeStreams"),

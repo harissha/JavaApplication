@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 import lombok.Getter;
 import lombok.Setter;

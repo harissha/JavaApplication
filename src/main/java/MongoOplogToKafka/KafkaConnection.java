@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 /*import it.cits.ebfoundation.cachemanager.exception.ServiceException;
 import it.cits.ebfoundation.cachemanager.util.PropertyUtil;*/

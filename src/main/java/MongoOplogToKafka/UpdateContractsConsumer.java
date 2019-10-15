@@ -1,19 +1,11 @@
-package Oplog;
+package MongoOplogToKafka;
 
-import com.google.gson.Gson;
-import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
-import com.mongodb.client.MongoCollection;
 import javaApiPractice.PropertyUtil;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import thread.CITSThreadPoolExecutor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;

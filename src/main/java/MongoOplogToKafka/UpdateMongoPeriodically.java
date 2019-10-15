@@ -1,7 +1,6 @@
-package Oplog;
+package MongoOplogToKafka;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
 import org.bson.BsonDocument;
 import org.bson.Document;
 
@@ -27,6 +26,6 @@ public class UpdateMongoPeriodically extends TimerTask {
         resumeTokenDoc.put("resumeToken", gBsonDocument);
         resumeTokenDoc.put("timestamp", timestamp);
         Document monitorData = new Document("$set", resumeTokenDoc);
-        gCollection.updateOne(Filters.eq("application", "MONGO_CHANGE_STREAMS"), monitorData);
+        //gCollection.updateOne(Filters.eq("application", "MONGO_CHANGE_STREAMS"), monitorData);
     }
 }

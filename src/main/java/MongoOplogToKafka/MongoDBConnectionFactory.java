@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;

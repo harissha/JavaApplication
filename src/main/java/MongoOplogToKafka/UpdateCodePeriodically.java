@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 import java.util.Date;
 
@@ -29,6 +29,13 @@ public class UpdateCodePeriodically {
         Long endTimestamp = startTimestamp + interval;
         System.out.println(endTimestamp);
         endTimestamp = updateCodePeriodically.repeatFunction(endTimestamp,interval);
+
+        /*Document resumeTokenDoc = new Document();
+        resumeTokenDoc.put("resumeToken", "something");
+        resumeTokenDoc.put("timestamp", "something");
+        Document monitorData = new Document("$set", resumeTokenDoc);
+        System.out.println("resumeTokenDoc : "+resumeTokenDoc);
+        System.out.println("monitorData : "+monitorData);*/
 
     }
 }

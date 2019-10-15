@@ -1,6 +1,6 @@
 package thread;
 
-import Oplog.ServiceException;
+import MongoOplogToKafka.ServiceException;
 import javaApiPractice.PropertyUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;

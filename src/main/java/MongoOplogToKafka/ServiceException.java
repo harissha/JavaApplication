@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 public class ServiceException extends Exception {
 

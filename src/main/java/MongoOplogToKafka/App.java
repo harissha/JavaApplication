@@ -1,4 +1,4 @@
-package Oplog;
+package MongoOplogToKafka;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;

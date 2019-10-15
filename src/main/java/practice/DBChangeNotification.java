@@ -1,0 +1,222 @@
+package practice;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleDriver;
+import oracle.jdbc.OracleStatement;
+import oracle.jdbc.dcn.*;
+import oracle.sql.ROWID;
+
+public class DBChangeNotification {
+    static final String USERNAME= "APPS";
+    static final String PASSWORD= "refrig3r8";
+    static String URL;
+
+    public static void main(String[] argv)
+    {
+        if(argv.length < 1)
+        {
+            System.out.println("Error: You need to provide the URL in the first argument.");
+            System.out.println("  For example: > java -classpath .:ojdbc5.jar DBChangeNotification \"jdbc:oracle:thin: @(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=yourhost.yourdomain.com)(PORT=1521))(CONNECT_DATA= (SERVICE_NAME=yourservicename)))\"");
+
+            System.exit(1);
+        }
+        URL = argv[0];
+        DBChangeNotification demo = new DBChangeNotification();
+        try
+        {
+            demo.run();
+        }
+        catch(SQLException mainSQLException )
+        {
+            mainSQLException.printStackTrace();
+        }
+    }
+
+    void run() throws SQLException
+    {
+        OracleConnection conn = connect();
+
+        // first step: create a registration on the server:
+        Properties prop = new Properties();
+
+        // if connected through the VPN, you need to provide the TCP address of the client.
+        // For example:
+        // prop.setProperty(OracleConnection.NTF_LOCAL_HOST,"14.14.13.12");
+
+        // Ask the server to send the ROWIDs as part of the DCN events (small performance
+        // cost):
+        prop.setProperty(OracleConnection.DCN_NOTIFY_ROWIDS,"true");
+//
+//Set the DCN_QUERY_CHANGE_NOTIFICATION option for query registration with finer granularity.
+        prop.setProperty(OracleConnection.DCN_QUERY_CHANGE_NOTIFICATION,"true");
+
+        // The following operation does a roundtrip to the database to create a new
+        // registration for DCN. It sends the client address (ip address and port) that
+        // the server will use to connect to the client and send the notification
+        // when necessary. Note that for now the registration is empty (we haven't registered
+        // any table). This also opens a new thread in the drivers. This thread will be
+        // dedicated to DCN (accept connection to the server and dispatch the events to
+        // the listeners).
+        DatabaseChangeRegistration dcr = conn.registerDatabaseChangeNotification(prop);
+
+        try
+        {
+            // add the listener :
+            DCNDemoListener list = new DCNDemoListener(this);
+            dcr.addListener(list);
+
+            // second step: add objects in the registration:
+            Statement stmt = conn.createStatement();
+            // associate the statement with the registration:
+            ((OracleStatement)stmt).setDatabaseChangeRegistration(dcr);
+            ResultSet rs = stmt.executeQuery("select * from dept_db_change_notification");
+            //ResultSet rs = stmt.executeQuery("select * from dept_db_change_notification where deptno='45'");
+            //ResultSet rs = stmt.executeQuery("select * from apps.XXCCS_EB_CONT_SUM_ACCESS_MIGN where ROWNUM <= 5");
+            while (rs.next()) {
+                System.out.println("Hello : ");
+                System.out.println(rs.getString(1)+"  "+rs.getString(2));
+
+                System.out.println("--------------------------------------");
+                //System.out.println(rs.next());
+                //System.out.println("--------------------------------------");
+            }
+            String[] tableNames = dcr.getTables();
+            for(int i=0;i<tableNames.length;i++)
+                System.out.println(tableNames[i]+" is part of the registration.");
+            rs.close();
+            stmt.close();
+        }
+        catch(SQLException ex)
+        {
+            // if an exception occurs, we need to close the registration in order
+            // to interrupt the thread otherwise it will be hanging around.
+            if(conn != null)
+                conn.unregisterDatabaseChangeNotification(dcr);
+            throw ex;
+        }
+        finally
+        {
+            try
+            {
+                // Note that we close the connection!
+                conn.close();
+            }
+            catch(Exception innerex){ innerex.printStackTrace(); }
+        }
+
+        synchronized( this )
+        {
+            // The following code modifies the dept table and commits:
+            try
+            {
+                OracleConnection conn2 = connect();
+                conn2.setAutoCommit(false);
+                Statement stmt2 = conn2.createStatement();
+                stmt2.executeUpdate("insert into dept_db_change_notification (deptno,dname) values ('45','cool dept')",
+                        Statement.RETURN_GENERATED_KEYS);
+                ResultSet autoGeneratedKey = stmt2.getGeneratedKeys();
+                if(autoGeneratedKey.next())
+                    System.out.println("inserted one row with ROWID="+autoGeneratedKey.getString(1));
+                stmt2.executeUpdate("insert into dept_db_change_notification (deptno,dname) values ('50','fun dept')",
+                        Statement.RETURN_GENERATED_KEYS);
+                autoGeneratedKey = stmt2.getGeneratedKeys();
+                if(autoGeneratedKey.next())
+                    System.out.println("inserted one row with ROWID="+autoGeneratedKey.getString(1));
+                stmt2.close();
+                conn2.commit();
+                conn2.close();
+            }
+            catch(SQLException ex) { ex.printStackTrace(); }
+
+            // wait until we get the event
+            try{ this.wait();} catch( InterruptedException ie ) {}
+        }
+
+        // At the end: close the registration (comment out these 3 lines in order
+        // to leave the registration open).
+
+        /*OracleConnection conn3 = connect();
+        conn3.unregisterDatabaseChangeNotification(dcr);
+        conn3.close();*/
+    }
+
+    /**
+     * Creates a connection the database.
+     */
+    OracleConnection connect() throws SQLException
+    {
+        OracleDriver dr = new OracleDriver();
+        Properties prop = new Properties();
+        prop.setProperty("user",DBChangeNotification.USERNAME);
+        prop.setProperty("password",DBChangeNotification.PASSWORD);
+        return (OracleConnection)dr.connect(DBChangeNotification.URL,prop);
+    }
+}
+/**
+ * DCN listener: it prints out the event details in stdout.
+ */
+class DCNDemoListener implements DatabaseChangeListener
+{
+    DBChangeNotification demo;
+    DCNDemoListener(DBChangeNotification dem)
+    {
+        demo = dem;
+    }
+    public void onDatabaseChangeNotification(DatabaseChangeEvent e)
+    {
+        Thread t = Thread.currentThread();
+        System.out.println("DCNDemoListener: got an event ("+this+" running on thread "+t+")");
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println(e.toString());
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println("getAdditionalEventType : "+e.getAdditionalEventType());
+        System.out.println("getConnectionInformation : "+e.getConnectionInformation());
+        System.out.println("getDatabaseName : "+e.getDatabaseName());
+        System.out.println("getEventType : "+e.getEventType());
+        System.out.println("getQueryChangeDescription : "+e.getQueryChangeDescription());
+        for(QueryChangeDescription q : e.getQueryChangeDescription()){
+            System.out.println("QueryChangeDescription starts .........................");
+            System.out.println("getQueryId : "+q.getQueryId());
+            System.out.println("getQueryChangeEventType : "+q.getQueryChangeEventType());
+            System.out.println("getTableChangeDescription : "+q.getTableChangeDescription());
+            for(TableChangeDescription tc : q.getTableChangeDescription()){
+                System.out.println("TableChangeDescription starts .........................");
+                System.out.println("getTableOperations : "+tc.getTableOperations());
+                System.out.println("getTableName : "+tc.getTableName());
+                System.out.println("getObjectNumber : "+tc.getObjectNumber());
+                System.out.println("getRowChangeDescription : "+tc.getRowChangeDescription());
+                for(RowChangeDescription r : tc.getRowChangeDescription()){
+                    System.out.println("RowChangeDescription starts .........................");
+                    System.out.println("getRowid : "+r.getRowid());
+
+                    System.out.println("stringValue : "+r.getRowid().stringValue());
+                    try {
+                        System.out.println("toJdbc : "+r.getRowid().toJdbc());
+                    }catch (SQLException se){se.printStackTrace();}
+
+
+
+                    System.out.println("getRowOperation : "+r.getRowOperation());
+                    System.out.println("RowChangeDescription ends .........................");
+                }
+                System.out.println("TableChangeDescription ends .........................");
+            }
+            System.out.println("QueryChangeDescription ends .........................");
+        }
+        System.out.println("getRegId : "+e.getRegId());
+        System.out.println("getTableChangeDescription : "+e.getTableChangeDescription());
+        System.out.println("getTransactionId : "+e.getTransactionId());
+        System.out.println("getTransactionId : "+e.getTransactionId(true));
+        System.out.println("getSource : "+e.getSource());
+        System.out.println("getRegistrationId : "+e.getRegistrationId());
+        try{
+            demo.run();
+        }catch (SQLException se){se.printStackTrace();}
+
+        synchronized( demo ){ demo.notify();}
+    }
+}

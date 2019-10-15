@@ -1,10 +1,5 @@
-package Oplog;
+package MongoOplogToKafka;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Streams;
-import com.mongodb.Block;
-import com.mongodb.client.MongoCollection;
 import javaApiPractice.PropertyUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -17,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Phaser;
-import java.util.stream.Collectors;
 
 public class PopulateContractConsumer implements Callable<Boolean> {
     private final BlockingQueue<HashSet<Document>> gQueue;

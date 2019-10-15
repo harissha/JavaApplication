@@ -34,7 +34,7 @@ public class JavaFX_Media_Example extends Application  {
         root.getChildren().add(mediaView);
         Scene scene = new Scene(root,1200,700);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("My Media Player");
+        primaryStage.setTitle("Rapchick Media Player");
         primaryStage.show();
     }
 
